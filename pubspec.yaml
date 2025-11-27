@@ -31,6 +31,23 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # SQLite Database
+  sqflite: ^2.3.0
+  path: ^1.9.0
+  path_provider: ^2.1.0
+
+  # Image handling (camera/gallery)
+  image_picker: ^1.0.7
+
+  # State Management (choose ONE: provider or bloc — provider is simpler)
+  provider: ^6.1.2
+
+  # For storing user session info
+  shared_preferences: ^2.2.2
+
+  # For UI design / Material Icons
+  google_fonts: ^6.1.0
+  intl: ^0.19.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
