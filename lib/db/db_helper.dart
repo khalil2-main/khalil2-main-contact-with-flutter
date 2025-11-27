@@ -47,7 +47,8 @@ class DBHelper {
         name TEXT NOT NULL,
         phone_number TEXT NOT NULL,
         image BLOB,
-        call_date TEXT
+        call_date TEXT,
+        isFav INTEGER NOT NULL DEFAULT 0  
       )
     ''');
 
