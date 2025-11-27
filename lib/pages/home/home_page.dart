@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'contacts_page.dart';
 import 'favorites_page.dart';
 import 'call_history_page.dart';
+import 'keypad_page.dart';   // <-- Make sure to import your KeypadPage
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,7 +33,18 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Contacts App"),
         centerTitle: true,
       ),
+
       body: _pages[_selectedIndex],
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const KeypadPage()),
+          );
+        },
+        child: const Icon(Icons.dialpad),   // keypad icon
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
