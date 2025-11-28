@@ -1,5 +1,10 @@
+import 'package:contact/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:contact/pages/Contact/control_contact_page.dart';
+import 'package:contact/services/auth_service.dart';
+
+import 'package:contact/models/user_model.dart';
 
 class KeypadPage extends StatefulWidget {
   const KeypadPage({super.key});
@@ -27,6 +32,9 @@ class _KeypadPageState extends State<KeypadPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Read the user from Provider here (CORRECT)
+    final user = context.watch<AuthService>().user as UserModel;
+
     // keypad labels
     List<String> keys = [
       "1", "2", "3",
@@ -38,7 +46,6 @@ class _KeypadPageState extends State<KeypadPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Keypad"),
-
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -46,24 +53,26 @@ class _KeypadPageState extends State<KeypadPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
+              //adding a contact function
               builder: (context) => AddContactPage(
                 phoneNumber: phoneNumber,
+                user: user,
               ),
             ),
           );
         },
         child: const Icon(Icons.person_add),
       ),
+
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox(height: 30),
           const Spacer(),
 
+          // Phone number display
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
@@ -75,7 +84,6 @@ class _KeypadPageState extends State<KeypadPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-
                 IconButton(
                   icon: const Icon(Icons.backspace),
                   onPressed: deleteDigit,
@@ -85,26 +93,22 @@ class _KeypadPageState extends State<KeypadPage> {
             ),
           ),
 
-
           const SizedBox(height: 20),
 
-          // Keypad Grid
+          // Keypad buttons
           GridView.builder(
             shrinkWrap: true,
             itemCount: keys.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // 3 columns
+              crossAxisCount: 3,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
               childAspectRatio: 1,
             ),
             itemBuilder: (context, index) {
               return ElevatedButton(
-                onPressed: () {
-                  addDigit(keys[index]);
-                },
+                onPressed: () => addDigit(keys[index]),
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(50, 50),
                   shape: const CircleBorder(),
                 ),
                 child: Text(
@@ -112,12 +116,12 @@ class _KeypadPageState extends State<KeypadPage> {
                   style: const TextStyle(fontSize: 22),
                 ),
               );
-
             },
           ),
 
           const SizedBox(height: 30),
 
+          // Call button
           ElevatedButton.icon(
             onPressed: () {
               print("Calling $phoneNumber");
@@ -128,7 +132,8 @@ class _KeypadPageState extends State<KeypadPage> {
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
             ),
           ),
-          const SizedBox(height: 10,)
+
+          const SizedBox(height: 10),
         ],
       ),
     );
