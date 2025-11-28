@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:contact/pages/home/home_page.dart';
 import 'package:contact/pages/auth/login_page.dart';
+import 'package:contact/theme/app_colors.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,34 +19,33 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulate splash duration
+    // Show splash for 2 seconds
+    await Future.delayed(const Duration(seconds: 2));
 
     final prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+    final email = prefs.getString('user_email'); // <-- your AuthService key
+    final isLoggedIn = email != null;
 
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-      );
-    }
+    // Navigate based on login state
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => isLoggedIn ? const HomePage() : const LoginPage(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue,
+    return const Scaffold(
+      backgroundColor:AppColors.primary ,
       body: Center(
         child: CircleAvatar(
-          backgroundImage: AssetImage('assets/images/contacts.png'),
-
           radius: 40,
-        )
+          backgroundImage: AssetImage('assets/images/contacts.png'),
+        ),
       ),
     );
   }
