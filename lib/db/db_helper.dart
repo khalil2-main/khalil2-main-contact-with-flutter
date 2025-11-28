@@ -44,18 +44,21 @@ class DBHelper {
     await db.execute('''
       CREATE TABLE contacts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         phone_number TEXT NOT NULL,
         image BLOB,
         call_date TEXT,
-        isFav INTEGER NOT NULL DEFAULT 0  
+        isFav INTEGER NOT NULL DEFAULT 0,
+         FOREIGN KEY (user_id) REFERENCES users(id)
+        
       )
     ''');
 
     await db.execute('''
       CREATE TABLE call_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        contact_id INTEGER,
+        contact_id INTEGER NOT NULL,
         call_date TEXT NOT NULL,
         FOREIGN KEY (contact_id) REFERENCES contacts(id)
       )
