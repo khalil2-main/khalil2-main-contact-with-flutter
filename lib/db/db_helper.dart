@@ -112,10 +112,15 @@ class DBHelper {
     return await db.insert("contacts", row);
   }
 
-  Future<List<Map<String, dynamic>>> getContacts() async {
+  Future<List<Map<String, dynamic>>> getContactsByUser(int userId) async {
     Database db = await instance.database;
-    return await db.query("contacts");
+    return await db.query(
+      "contacts",
+      where: "user_id = ?",
+      whereArgs: [userId],
+    );
   }
+
   Future<int> deleteContact(int id) async {
     Database db = await instance.database;
 
