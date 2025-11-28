@@ -1,46 +1,62 @@
 import 'package:flutter/material.dart';
-import '../../widgets/contact_card.dart';
 import 'package:contact/models/contact_model.dart';
+import 'package:contact/models/user_model.dart';
+import 'package:contact/db/db_helper.dart';
+import '../../widgets/contact_card.dart';
 
 class ContactsPage extends StatefulWidget {
-  const ContactsPage({super.key});
+  final UserModel user;
+
+  const ContactsPage({super.key, required this.user});
 
   @override
   State<ContactsPage> createState() => _ContactsPageState();
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  // creat a moack data for testing
-  List<ContactModel> contacts = List.generate(
-    10,
-        (index) => ContactModel(
-      id: index,
-      name: "ali bil kahmis",
-      phoneNumber: "28457669",
-      isFav: index % 2 == 0,
-    ),
-  );
+  List<ContactModel> contacts = [];
 
-  void toggleFavorite(int index) {
+  @override
+  void initState() {
+    super.initState();
+    loadContacts();
+  }
+
+
+  Future<void> loadContacts() async {
+    final data = await DBHelper.instance.getContactsByUser(widget.user.id!);
+
     setState(() {
-      // Create a new ContactModel manually with toggled isFav
-      final contact = contacts[index];
-      contacts[index] = ContactModel(
-        id: contact.id,
-        name: contact.name,
-        phoneNumber: contact.phoneNumber,
-        image: contact.image,
-        isFav: !contact.isFav,
-      );
+      contacts = data.map((row) => ContactModel.fromMap(row)).toList();
     });
+  }
 
-    // Optionally update database here
+  // change the the favorite state
+  Future<void> toggleFavorite(int index) async {
+    final  contact = contacts[index];
+
+    final ContactModel updated = ContactModel(
+      id: contact.id,
+      userId: contact.userId,
+      name: contact.name,
+      phoneNumber: contact.phoneNumber,
+      image: contact.image,
+      isFav: !contact.isFav,
+    );
+
+    await DBHelper.instance.updateContact(updated.toMap());
+
+    setState(() {
+      contacts[index] = updated;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
+      body: contacts.isEmpty
+          ? const Center(child: Text("No contacts found"))
+          : ListView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: contacts.length,
         itemBuilder: (context, index) {
@@ -48,11 +64,10 @@ class _ContactsPageState extends State<ContactsPage> {
           return ContactCard(
             contact: contact,
             onFavoriteToggle: () => toggleFavorite(index),
-            onEdit: () {
-              // Handle edit
-            },
-            onDelete: () {
-              // Handle delete
+            onEdit: () {},
+            onDelete: () async {
+              await DBHelper.instance.deleteContact(contact.id!);
+              loadContacts();
             },
           );
         },
