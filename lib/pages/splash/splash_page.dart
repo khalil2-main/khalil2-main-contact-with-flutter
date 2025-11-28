@@ -22,8 +22,9 @@ class _SplashPageState extends State<SplashPage> {
     // Show splash for 2 seconds
     await Future.delayed(const Duration(seconds: 2));
 
+    /// get user fro to device storage
     final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('user_email'); // <-- your AuthService key
+    final email = prefs.getString('user_email');
     final isLoggedIn = email != null;
 
     // Navigate based on login state
