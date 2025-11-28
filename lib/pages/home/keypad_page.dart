@@ -1,4 +1,5 @@
 import 'package:contact/models/user_model.dart';
+import 'package:contact/pages/actions/call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:contact/pages/Contact/control_contact_page.dart';
@@ -32,7 +33,7 @@ class _KeypadPageState extends State<KeypadPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Read the user from Provider here (CORRECT)
+
     final user = context.watch<AuthService>().user as UserModel;
 
     // keypad labels
@@ -124,7 +125,11 @@ class _KeypadPageState extends State<KeypadPage> {
           // Call button
           ElevatedButton.icon(
             onPressed: () {
-              print("Calling $phoneNumber");
+              Navigator.push(context,
+              MaterialPageRoute(
+                  builder: (_)=> CallPage(phoneNumber: phoneNumber),
+              ),
+              );
             },
             icon: const Icon(Icons.call),
             label: const Text("Call"),

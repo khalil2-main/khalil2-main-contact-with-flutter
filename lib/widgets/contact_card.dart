@@ -1,3 +1,5 @@
+import 'package:contact/db/db_helper.dart';
+import 'package:contact/pages/actions/call_page.dart';
 import 'package:flutter/material.dart';
 import 'package:contact/theme/app_colors.dart';
 import 'package:contact/theme/app_text_styles.dart';
@@ -54,7 +56,22 @@ class _ContactCardState extends State<ContactCard> {
                 ListTile(
                   leading: const Icon(Icons.call),
                   title: const Text("Call"),
-                  onTap: () {},
+                  onTap: () async {
+                    // create a  callhistory
+                    await DBHelper.instance.insertCallHistory(widget.contact.id!,);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CallPage(
+                          name: widget.contact.name,
+                          phoneNumber: widget.contact.phoneNumber,
+                        ),
+                      ),
+                    );
+                  },
+
+
                 ),
                 ListTile(
                   leading: const Icon(Icons.message),
