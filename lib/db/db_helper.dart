@@ -160,14 +160,17 @@ class DBHelper {
     });
   }
   //Get Call history
-  Future<List<Map<String, dynamic>>> getCallHistory() async {
-    Database db = await instance.database;
+  Future<List<Map<String, dynamic>>> getCallHistoryByContact(int contactId) async {
+    final db = await instance.database;
+
     return await db.rawQuery('''
-      SELECT contacts.name, contacts.phone_number, contacts.image, call_history.call_date
-      FROM call_history
-      JOIN contacts ON contacts.id = call_history.contact_id
-      ORDER BY call_history.call_date DESC
-    ''');
+    SELECT contacts.name, contacts.phone_number, contacts.image, call_history.call_date
+    FROM call_history
+    JOIN contacts ON contacts.id = call_history.contact_id
+    WHERE call_history.contact_id = ?
+    ORDER BY call_history.call_date DESC
+  ''', [contactId]);
   }
+
 
 }
