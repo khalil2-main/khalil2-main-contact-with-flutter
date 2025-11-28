@@ -8,16 +8,22 @@ import 'package:contact/pages/splash/splash_page.dart';
 import 'package:contact/pages/home/home_page.dart';
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Create AuthService and load saved user session
+  final authService = AuthService();
+  await authService.loadFromPrefs();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => authService),
       ],
       child: const MyApp(),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
