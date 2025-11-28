@@ -16,10 +16,5 @@ class CallHistoryModel {
         callDate: json["call_date"],
       );
 
-  // refactor  object to a map so I can send it to the database
-  Map<String, dynamic> toMap() => {
-    "id": id,
-    "contact_id": contactId,
-    "call_date": callDate,
-  };
+
 }
