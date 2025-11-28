@@ -151,11 +151,12 @@ class DBHelper {
 
 
   // create call history
-  Future<int> insertCallHistory(int contactId, String date) async {
+  Future<int> insertCallHistory(int contactId) async {
     Database db = await instance.database;
+    final now = DateTime.now().toIso8601String();
     return await db.insert("call_history", {
       "contact_id": contactId,
-      "call_date": date,
+      "call_date": now,
     });
   }
   //Get Call history
