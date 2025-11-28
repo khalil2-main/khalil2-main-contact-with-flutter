@@ -1,13 +1,13 @@
+import 'package:contact/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:contact/services/auth_service.dart';
-import 'package:contact/pages/auth/login_page.dart';
 
+import 'package:contact/pages/auth/login_page.dart';
 import 'package:contact/pages/Contact/contacts_page.dart';
 import 'package:contact/pages/Contact/favorites_page.dart';
 import 'package:contact/pages/Contact/call_history_page.dart';
-
-import 'keypad_page.dart';
+import 'package:contact/pages/home/keypad_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,19 +20,13 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final TextEditingController _searchController = TextEditingController();
-  //navigation routes
-  final List<Widget> _pages = const [
-    ContactsPage(),
-    FavoritesPage(),
-    CallHistoryPage(),
-  ];
 
   void _onTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
-  //logout function call
+
   Future<void> _logout(BuildContext context) async {
     final authService = context.read<AuthService>();
     await authService.logout();
@@ -48,9 +42,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final user = context.watch<AuthService>().user as UserModel;
+
+    // Build contact pages
+    final pages = [
+      ContactsPage(user: user),
+      FavoritesPage(user: user),
+      CallHistoryPage(user: user),
+    ];
+
     return Scaffold(
       appBar: AppBar(
-        // search bar (still not functional)
         title: SizedBox(
           height: 40,
           child: TextField(
@@ -68,9 +71,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-
         actions: [
-          //use poppup menu to logout
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == "logout") {
@@ -93,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -104,23 +105,14 @@ class _HomePageState extends State<HomePage> {
         },
         child: const Icon(Icons.dialpad),
       ),
-      //navigation buttons
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTabTapped,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.contacts),
-            label: "Contacts",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.star),
-            label: "Favorites",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: "History",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.contacts), label: "Contacts"),
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Favorites"),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
         ],
       ),
     );
