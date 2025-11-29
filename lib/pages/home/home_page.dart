@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     // debounce 0.5s
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 300), () {
       // triggers rebuild with new search result 
       setState(() {}); 
     });
