@@ -62,13 +62,8 @@ class _ContactsPageState extends State<ContactsPage> {
         itemBuilder: (context, index) {
           final contact = contacts[index];
           return ContactCard(
-            contact: contact,
-            onFavoriteToggle: () => toggleFavorite(index),
-            onEdit: () {},
-            onDelete: () async {
-              await DBHelper.instance.deleteContact(contact.id!);
-              loadContacts();
-            },
+            contact: contact
+
           );
         },
       ),
