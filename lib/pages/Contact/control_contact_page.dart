@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:contact/db/db_helper.dart';
 import 'package:contact/models/contact_model.dart';
 import 'package:contact/models/user_model.dart';
+import 'package:contact/theme/app_colors.dart';
+import 'package:contact/theme/app_text_styles.dart';
 
 class AddContactPage extends StatefulWidget {
   final String phoneNumber;
@@ -16,7 +18,7 @@ class AddContactPage extends StatefulWidget {
 }
 
 class _AddContactPageState extends State<AddContactPage> {
-  final TextEditingController newName = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   late TextEditingController phoneController;
 
   Uint8List? imageBytes;
@@ -24,14 +26,12 @@ class _AddContactPageState extends State<AddContactPage> {
   @override
   void initState() {
     super.initState();
-    // initialize phone controller with the passed number
     phoneController = TextEditingController(text: widget.phoneNumber);
   }
 
-  // pick an image from the gallery
   Future<void> pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       imageBytes = await pickedFile.readAsBytes();
@@ -39,9 +39,8 @@ class _AddContactPageState extends State<AddContactPage> {
     }
   }
 
-  // save the new contact in the database
   Future<void> saveContact() async {
-    if (newName.text.isEmpty) {
+    if (nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter a name")),
       );
@@ -55,8 +54,8 @@ class _AddContactPageState extends State<AddContactPage> {
       return;
     }
 
-    ContactModel contact = ContactModel(
-      name: newName.text,
+    final contact = ContactModel(
+      name: nameController.text,
       userId: widget.user.id,
       phoneNumber: phoneController.text,
       image: imageBytes,
@@ -65,64 +64,70 @@ class _AddContactPageState extends State<AddContactPage> {
 
     await DBHelper.instance.insertContact(contact.toMap());
 
-    // Navigate back to HomePage
-    Navigator.popUntil(context, (route) => route.isFirst);
+
+    Navigator.pop(context, true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Add Contact")),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: const Text("Add Contact"),
+        backgroundColor: AppColors.primary,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Profile Image
             GestureDetector(
               onTap: pickImage,
               child: CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.grey.shade300,
-                backgroundImage:
-                imageBytes != null ? MemoryImage(imageBytes!) : null,
+                backgroundImage: imageBytes != null ? MemoryImage(imageBytes!) : null,
                 child: imageBytes == null
-                    ? const Icon(Icons.camera_alt, size: 40)
+                    ? Icon(Icons.camera_alt, size: 40, color: AppColors.textLight)
                     : null,
               ),
             ),
 
             const SizedBox(height: 30),
 
-            // Name Field
             TextField(
-              controller: newName,
-              decoration: const InputDecoration(
+              controller: nameController,
+              style: AppTextStyles.title,
+              decoration: InputDecoration(
                 labelText: "Name",
-                border: OutlineInputBorder(),
+                labelStyle: AppTextStyles.subtitle,
+                border: const OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // Editable Phone Number
             TextField(
               controller: phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
+              style: AppTextStyles.subtitle,
+              decoration: InputDecoration(
                 labelText: "Phone Number",
-                border: OutlineInputBorder(),
+                labelStyle: AppTextStyles.subtitle,
+                border: const OutlineInputBorder(),
               ),
             ),
 
             const SizedBox(height: 30),
 
-            // Save Button
             ElevatedButton.icon(
               onPressed: saveContact,
               icon: const Icon(Icons.save),
               label: const Text("Save Contact"),
               style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
+                textStyle: AppTextStyles.title,
               ),
             ),
           ],

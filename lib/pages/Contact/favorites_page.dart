@@ -67,13 +67,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
           return ContactCard(
             contact: contact,
-            onFavoriteToggle: () => toggleFavorite(contact),
-            onEdit: () {
 
-            },
-            onDelete: () {
-
-            },
           );
         },
       ),
