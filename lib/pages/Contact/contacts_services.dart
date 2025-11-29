@@ -1,5 +1,5 @@
 import 'package:contact/db/db_helper.dart';
-import 'package:contact/models/call_history_model.dart';
+
 import 'package:contact/models/contact_model.dart';
 
 class ContactService {
