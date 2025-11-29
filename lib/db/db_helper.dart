@@ -121,6 +121,27 @@ class DBHelper {
     );
   }
 
+  Future<List<Map<String, dynamic>>> getContactsById(int id) async {
+    Database db = await instance.database;
+    return await db.query(
+      "contacts",
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+
+  Future<List<Map<String, dynamic>>> searchContacts(int userId, String query) async {
+    final db = await instance.database;
+
+    return await db.query(
+      "contacts",
+      where: "user_id = ? AND name LIKE ?",
+      whereArgs: [userId, "$query%"],
+    );
+  }
+
+
   Future<int> deleteContact(int id) async {
     Database db = await instance.database;
 
