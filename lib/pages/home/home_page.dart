@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:contact/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,18 +20,39 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
-  void _onTabTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    // debounce 0.5s
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      // triggers rebuild with new search result 
+      setState(() {}); 
     });
   }
 
+  void _onTabTapped(int index) {
+    setState(() => _selectedIndex = index);
+  }
+
   Future<void> _logout(BuildContext context) async {
-    final authService = context.read<AuthService>();
-    await authService.logout();
+    final auth = context.read<AuthService>();
+    await auth.logout();
 
     if (!mounted) return;
 
@@ -42,14 +65,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     final user = context.watch<AuthService>().user as UserModel;
+    String searchInput = _searchController.text.trim();
 
-    // Build contact pages
     final pages = [
-      ContactsPage(user: user),
-      FavoritesPage(user: user),
-      CallHistoryPage(user: user),
+      ContactsPage(user: user, searchInput: searchInput),
+      FavoritesPage(user: user, searchInput: searchInput),
+      CallHistoryPage(user: user, searchInput: searchInput),
     ];
 
     return Scaffold(
@@ -62,12 +84,12 @@ class _HomePageState extends State<HomePage> {
               hintText: 'Search...',
               filled: true,
               fillColor: Colors.white,
+              prefixIcon: const Icon(Icons.search),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(50),
                 borderSide: BorderSide.none,
               ),
-              prefixIcon: const Icon(Icons.search),
             ),
           ),
         ),
@@ -100,19 +122,22 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const KeypadPage()),
+            MaterialPageRoute(builder: (_) => const KeypadPage()),
           );
         },
         child: const Icon(Icons.dialpad),
       ),
-
+      /// navigation buttons
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onTabTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.contacts), label: "Contacts"),
-          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Favorites"),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.contacts), label: "Contacts"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.star), label: "Favorites"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.history), label: "History"),
         ],
       ),
     );

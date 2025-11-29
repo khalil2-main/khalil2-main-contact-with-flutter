@@ -1,72 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:contact/models/contact_model.dart';
 import 'package:contact/models/user_model.dart';
-import 'package:contact/db/db_helper.dart';
-import '../../widgets/contact_card.dart';
+import 'package:contact/widgets/contact_card.dart';
+import 'package:contact/pages/Contact/contacts_services.dart';
 
 class ContactsPage extends StatefulWidget {
   final UserModel user;
+  final String searchInput;
 
-  const ContactsPage({super.key, required this.user});
+  const ContactsPage({super.key, required this.user, required this.searchInput});
 
   @override
   State<ContactsPage> createState() => _ContactsPageState();
 }
 
 class _ContactsPageState extends State<ContactsPage> {
+  final ContactService cv = ContactService.instance;
   List<ContactModel> contacts = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    loadContacts();
+    _loadContacts();
   }
 
-
-  Future<void> loadContacts() async {
-    final data = await DBHelper.instance.getContactsByUser(widget.user.id!);
-
-    setState(() {
-      contacts = data.map((row) => ContactModel.fromMap(row)).toList();
-    });
+  @override
+  void didUpdateWidget(covariant ContactsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchInput != widget.searchInput) {
+      _loadContacts();
+    }
   }
 
-  // change the the favorite state
-  Future<void> toggleFavorite(int index) async {
-    final  contact = contacts[index];
+  Future<void> _loadContacts() async {
+    setState(() => isLoading = true);
 
-    final ContactModel updated = ContactModel(
-      id: contact.id,
-      userId: contact.userId,
-      name: contact.name,
-      phoneNumber: contact.phoneNumber,
-      image: contact.image,
-      isFav: !contact.isFav,
+    final newContacts = await cv.loadContacts(
+      widget.user.id!,
+      query: widget.searchInput,
     );
 
-    await DBHelper.instance.updateContact(updated.toMap());
-
     setState(() {
-      contacts[index] = updated;
+      contacts = newContacts;
+      isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: contacts.isEmpty
-          ? const Center(child: Text("No contacts found"))
-          : ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: contacts.length,
-        itemBuilder: (context, index) {
-          final contact = contacts[index];
-          return ContactCard(
-            contact: contact
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-          );
-        },
-      ),
+    if (contacts.isEmpty) {
+      return const Center(child: Text("No contacts found"));
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: contacts.length,
+      itemBuilder: (_, i) => ContactCard(contact: contacts[i]),
     );
   }
 }
