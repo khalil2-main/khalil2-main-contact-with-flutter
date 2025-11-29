@@ -83,6 +83,8 @@ class _ContactCardState extends State<ContactCard> {
                   title: const Text("Call"),
                   onTap: () async {
                     await DBHelper.instance.insertCallHistory(widget.contact.id!);
+                    // remove the button sheets
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -97,7 +99,16 @@ class _ContactCardState extends State<ContactCard> {
                 ListTile(
                   leading: const Icon(Icons.message),
                   title: const Text("Message"),
-                  onTap: () {},
+                  onTap: () {
+                    // remove the button sheets
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Function not available yet"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

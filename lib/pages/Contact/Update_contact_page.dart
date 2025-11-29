@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:contact/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:contact/db/db_helper.dart';
@@ -65,7 +66,11 @@ class _ModifyContactPageState extends State<ModifyContactPage> {
 
     await DBHelper.instance.updateContact(updatedContact.toMap());
 
-    Navigator.pop(context, true);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+          (route) => false,
+    );
   }
 
   @override
