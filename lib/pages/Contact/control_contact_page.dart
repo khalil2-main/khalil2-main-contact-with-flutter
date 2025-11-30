@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:contact/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:contact/db/db_helper.dart';
