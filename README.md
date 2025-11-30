@@ -1,3 +1,6 @@
+## 📁 Folder Structure
+
+```
 │   main.dart
 │
 ├───db
@@ -40,5 +43,6 @@
 │       theme.dart
 │
 └───widgets
-call_history_card.dart
-contact_card.dart
+        call_history_card.dart
+        contact_card.dart
+```
