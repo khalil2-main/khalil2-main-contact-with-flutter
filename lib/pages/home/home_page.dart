@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:contact/models/user_model.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:contact/services/auth_service.dart';
@@ -65,7 +65,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthService>().user as UserModel;
+    final user = context.watch<AuthService>().user;
+
+    if(user==null)  return const Center(child: CircularProgressIndicator());
+
+    final userModel = user;
+
+
     String searchInput = _searchController.text.trim();
 
     final pages = [
