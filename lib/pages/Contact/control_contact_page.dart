@@ -66,11 +66,7 @@ class _AddContactPageState extends State<AddContactPage> {
     await DBHelper.instance.insertContact(contact.toMap());
 
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const HomePage()),
-          (route) => false,
-    );
+    Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
   }
 
   @override
