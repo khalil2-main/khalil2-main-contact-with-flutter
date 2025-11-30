@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onSearchChanged() {
-    // debounce 0.5s
+    // wait for  0.3s before sending the search text as a parameter
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 300), () {

@@ -131,9 +131,12 @@ class _KeypadPageState extends State<KeypadPage> {
               ),
               );
             },
+
             icon: const Icon(Icons.call),
             label: const Text("Call"),
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
             ),
           ),

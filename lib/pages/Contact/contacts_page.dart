@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:contact/models/contact_model.dart';
 import 'package:contact/models/user_model.dart';
 import 'package:contact/widgets/contact_card.dart';
-import 'package:contact/pages/Contact/contacts_services.dart';
+import 'package:contact/services/contacts_services.dart';
 
 class ContactsPage extends StatefulWidget {
   final UserModel user;
